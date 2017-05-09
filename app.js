@@ -29,4 +29,4 @@ app.delete('/api/veiculo', function (req, res) {
         .catch(error => res.send(JSON.stringify(error)));
 });
 
-app.listen(3000);
+app.listen(process.env.PORT || 8080);
