@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css"
+          integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
+    <title>UNP - Web 03</title>
+</head>
+<body>
+<div id="myApp">
+    <table class="pure-table">
+        <thead>
+        <tr>
+            <th>Codigo</th>
+            <th>Modelo</th>
+            <th>Placa</th>
+            <th>Descricao</th>
+            <th>Tarifa</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="veiculo in veiculos">
+            <td>{{ veiculo.Codigo }}</td>
+            <td>{{ veiculo.Modelo }}</td>
+            <td>{{ veiculo.Placa }}</td>
+            <td>{{ veiculo.Descricao }}</td>
+            <td>{{ veiculo.Tarifa }}</td>
+            <td><a href="#" class="pure-button" @click="deleteVeiculo(veiculo)">X</a></td>
+        </tr>
+        </tbody>
+    </table>
+    <div>
+        <form class="pure-form">
+            <fieldset>
+                <input type="text" placeholder="Modelo" v-model="veiculo.Modelo">
+                <input type="text" placeholder="Placa" v-model="veiculo.Placa">
+                <input type="text" placeholder="Descricao" v-model="veiculo.Descricao">
+                <input type="text" placeholder="Tarifa" v-model="veiculo.Tarifa">
+
+                <input type="button" class="pure-button pure-button-primary" @click="insertVeiculo" value="Salvar"/>
+            </fieldset>
+        </form>
+    </div>
+</div>
+<script src="https://unpkg.com/vue"></script>
+<script type="application/javascript">
+    const app = new Vue({
+        el: '#myApp',
+        data: {
+            veiculos: [],
+            veiculo: {},
+        },
+        methods: {
+            getVeiculos: function (){
+                fetch('api/veiculo')
+                    .then(response => response.json())
+                    .then(veiculos => {
+                        app.veiculos = veiculos
+                    });
+            },
+            insertVeiculo: function () {
+                fetch('api/veiculo', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(this.veiculo)
+                })
+                    .then(() => this.veiculo = {})
+                    .then(this.getVeiculos)
+                    .catch(console.error);
+            },
+            deleteVeiculo: function (veiculo) {
+                fetch('api/veiculo', {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(veiculo)
+                })
+                    .then(this.getVeiculos)
+                    .catch(console.error);
+            }
+        }
+    });
+
+    app.getVeiculos();
+
+</script>
+</body>
+</html>
